@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+      function deleteTask(task_id) {
+        var data = {
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          task_id: task_id,
+        };
+
+        $.ajax({
+          url: "{% url 'ajax-delete-task' %}",
+          method: "POST",
+          data: data,
+          success: function (data) {
+            document.location.reload();
+          },
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Home</a>
+    </nav>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+          <h5 class="card-title">Dashboard</h5>
+          <a href="create-task" class="btn btn-primary">Create Task</a>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">TASK NAME</th>
+              <th scope="col">DATE</th>
+              <th scope="col">REPEAT</th>
+              <th scope="col">DESCRIPTION</th>
+              <th scope="col">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for task in task_list %}
+            <tr>
+              <td>{{ task.name }}</td>
+              <td>{{ task.due_date }}</td>
+              <td>{{ task.repeat }}</td>
+              <td>{{ task.description }}</td>
+              <td>
+                <a
+                  href="{% url 'update-task' task.task_id %}"
+                  class="btn btn-success"
+                  >Edit</a
+                >
+                <a
+                  class="btn btn-danger"
+                  onclick="deleteTask('{{ task.task_id }}')"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
